@@ -12,17 +12,21 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 echo "Applying Kubernetes manifests..."
-                sh 'kubectl apply -f kubernetes/deployment.yaml'
-                sh 'kubectl apply -f kubernetes/service.yaml'
+                sh "kubectl apply -f kubernetes/deployment.yaml"
+                sh "kubectl apply -f kubernetes/service.yaml"
             }
         }
 
         stage('Verify Deployment') {
             steps {
                 echo "Verifying rollout..."
-                sh 'kubectl rollout status deployment/flask-app'
-                sh 'kubectl get pods'
-                sh 'kubectl get svc'
+                sh "kubectl rollout status deployment/flask-app"
+
+                echo "Listing pods..."
+                sh "kubectl get pods -o wide"
+
+                echo "Listing services..."
+                sh "kubectl get svc"
             }
         }
     }
@@ -36,3 +40,4 @@ pipeline {
         }
     }
 }
+
