@@ -1,11 +1,16 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "flask-app:latest"
+    }
+
     stages {
 
         stage('Build Docker Image') {
             steps {
-                echo "Simulating Docker build (Docker not installed in Jenkins container)..."
+                echo "Building Docker image..."
+                sh "docker build -t ${IMAGE_NAME} ."
             }
         }
 
@@ -19,7 +24,7 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
-                echo "Verifying rollout..."
+                echo "Checking rollout status..."
                 sh "kubectl rollout status deployment/flask-app"
 
                 echo "Listing pods..."
@@ -33,11 +38,10 @@ pipeline {
 
     post {
         success {
-            echo "🎉 Deployment completed successfully!"
+            echo "🎉 Deployment to Kubernetes completed successfully!"
         }
         failure {
             echo "❌ Deployment failed!"
         }
     }
 }
-
